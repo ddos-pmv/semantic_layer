@@ -1,3 +1,6 @@
 numpy
 psutil
 sentence-transformers
+pytest
+pytest-benchmark
+asdfasdfasdfadsf

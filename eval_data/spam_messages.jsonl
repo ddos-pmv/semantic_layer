@@ -1,0 +1,20 @@
+{"spam_type": "prize_scam", "en": "Congratulations, you have won a brand new smartphone. Claim your prize now.", "ru": "Поздравляем, вы выиграли новый смартфон. Заберите свой приз сейчас."}
+{"spam_type": "prize_scam", "en": "You were selected for an exclusive cash reward. Confirm your details to receive it.", "ru": "Вы были выбраны для эксклюзивного денежного вознаграждения. Подтвердите данные, чтобы получить его."}
+{"spam_type": "prize_scam", "en": "Your email address has been chosen in our monthly giveaway.", "ru": "Ваш адрес электронной почты был выбран в нашей ежемесячной раздаче призов."}
+{"spam_type": "prize_scam", "en": "Open this link to unlock your personal gift before it expires.", "ru": "Откройте эту ссылку, чтобы получить персональный подарок до истечения срока."}
+{"spam_type": "prize_scam", "en": "Final notice: your prize is waiting and must be claimed today.", "ru": "Последнее уведомление: ваш приз ожидает получения и должен быть забран сегодня."}
+{"spam_type": "account_phishing", "en": "Your account will be suspended unless you verify your login information.", "ru": "Ваш аккаунт будет заблокирован, если вы не подтвердите данные для входа."}
+{"spam_type": "account_phishing", "en": "We detected unusual activity. Sign in now to secure your account.", "ru": "Мы обнаружили необычную активность. Войдите сейчас, чтобы защитить аккаунт."}
+{"spam_type": "account_phishing", "en": "Your password has expired. Complete account verification immediately.", "ru": "Срок действия вашего пароля истек. Немедленно пройдите проверку аккаунта."}
+{"spam_type": "account_phishing", "en": "Confirm your identity to prevent temporary account restrictions.", "ru": "Подтвердите личность, чтобы избежать временных ограничений аккаунта."}
+{"spam_type": "account_phishing", "en": "Security alert: update your account recovery information today.", "ru": "Предупреждение безопасности: обновите данные восстановления аккаунта сегодня."}
+{"spam_type": "bank_payment_phishing", "en": "Your payment was declined. Confirm your card details to retry the transaction.", "ru": "Ваш платеж был отклонен. Подтвердите данные карты, чтобы повторить операцию."}
+{"spam_type": "bank_payment_phishing", "en": "Your bank profile requires immediate verification to avoid service limits.", "ru": "Ваш банковский профиль требует немедленной проверки, чтобы избежать ограничений обслуживания."}
+{"spam_type": "bank_payment_phishing", "en": "A suspicious transaction was detected. Review your payment information now.", "ru": "Обнаружена подозрительная операция. Проверьте платежные данные сейчас."}
+{"spam_type": "bank_payment_phishing", "en": "Your invoice is overdue. Open the secure payment page to settle it.", "ru": "Ваш счет просрочен. Откройте безопасную страницу оплаты, чтобы погасить его."}
+{"spam_type": "bank_payment_phishing", "en": "Card verification is required before your next online purchase.", "ru": "Перед следующей онлайн-покупкой требуется проверка карты."}
+{"spam_type": "crypto_investment_scam", "en": "Double your crypto deposit in 24 hours with our private trading system.", "ru": "Удвойте свой криптовалютный депозит за 24 часа с нашей закрытой торговой системой."}
+{"spam_type": "crypto_investment_scam", "en": "Your wallet has a pending payout. Activate the transfer to receive funds.", "ru": "В вашем кошельке ожидается выплата. Активируйте перевод, чтобы получить средства."}
+{"spam_type": "crypto_investment_scam", "en": "Join our exclusive investment group and earn guaranteed daily profit.", "ru": "Присоединяйтесь к нашей эксклюзивной инвестиционной группе и получайте гарантированную ежедневную прибыль."}
+{"spam_type": "crypto_investment_scam", "en": "Limited crypto bonus available for verified users only.", "ru": "Ограниченный криптобонус доступен только подтвержденным пользователям."}
+{"spam_type": "crypto_investment_scam", "en": "Invest today and withdraw high returns by tomorrow morning.", "ru": "Инвестируйте сегодня и выведите высокий доход завтра утром."}
