@@ -22,6 +22,8 @@ def test_single_embedding(model, en_texts, measured_iterations):
             embedding = model.encode(text)
             end_ns = time.perf_counter_ns()
 
+            assert embedding.ndim == 1
+            assert np.isfinite(embedding).all()
             times_ns.append(end_ns - start_ns)
     finally:
         gc.enable()
@@ -43,13 +45,12 @@ def test_single_embedding(model, en_texts, measured_iterations):
 @pytest.mark.performance
 @pytest.mark.parametrize("batch_size", [1, 2, 4, 8, 16, 32, 64, 128])
 @pytest.mark.parametrize("measured_iterations", [10])
-def test_batch_embedding(model, en_texts,batch_size, measured_iterations):
-    text = en_texts[0]
+def test_batch_embedding(model, en_texts, batch_size, measured_iterations):
     texts = [en_texts[0]] * batch_size
     warmup_iterations = 10
 
     for _ in range(warmup_iterations):
-        model.encode(text)
+        model.encode(texts, batch_size=batch_size)
 
     gc.disable()
     try:
@@ -59,6 +60,8 @@ def test_batch_embedding(model, en_texts,batch_size, measured_iterations):
             embedding = model.encode(texts, batch_size=batch_size)
             end_ns = time.perf_counter_ns()
 
+            assert embedding.shape[0] == batch_size
+            assert np.isfinite(embedding).all()
             times_ns.append(end_ns - start_ns)
     finally:
         gc.enable()
