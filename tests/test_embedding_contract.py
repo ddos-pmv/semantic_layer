@@ -50,9 +50,9 @@ def print_nearest_report(anchor, top_rows):
 def en_ru_pairs(en_rows, ru_rows):
     return list(zip(en_rows, ru_rows))
 
-def test_en_embeding(model, en_texts):
+def test_en_embedding(model, en_texts):
     cntTexts = len(en_texts)
-    embeddings = model.encode(en_texts)
+    embeddings = model.encode(en_texts, convert_to_numpy=True)
 
     assert cntTexts == len(embeddings)
 
@@ -61,7 +61,7 @@ def test_en_embeding(model, en_texts):
     assert embeddings[-1].dtype == np.float32
 
 
-def test_ru_embeding(model, ru_texts):
+def test_ru_embedding(model, ru_texts):
     cntTexts = len(ru_texts)
     embeddings = model.encode(ru_texts)
 
