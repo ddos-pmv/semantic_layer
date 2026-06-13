@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 from sentence_transformers import SentenceTransformer
@@ -6,10 +7,37 @@ from sentence_transformers import SentenceTransformer
 
 MODEL_PATH = "models/paraphrase-multilingual-MiniLM-L12-v2"
 DATA_PATH = "eval_data/spam_paraphrases.jsonl"
+REQUIRED_MODEL_FILES = (
+    "1_Pooling/config.json",
+    "config.json",
+    "config_sentence_transformers.json",
+    "modules.json",
+    "model.onnx",
+    "pytorch_model.bin",
+    "sentence_bert_config.json",
+    "special_tokens_map.json",
+    "tokenizer.json",
+    "tokenizer_config.json",
+)
+
+
+def missing_model_files():
+    model_path = Path(MODEL_PATH)
+    return [
+        file
+        for file in REQUIRED_MODEL_FILES
+        if not (model_path / file).is_file()
+    ]
 
 
 @pytest.fixture(scope="session")
 def model():
+    missing_files = missing_model_files()
+    assert not missing_files, (
+        "Local model is incomplete. Run core/scripts/download_model.sh. "
+        f"Missing files: {missing_files}"
+    )
+
     model = SentenceTransformer(MODEL_PATH, local_files_only=True)
 
     embedding = model.encode(["Test sentence."])

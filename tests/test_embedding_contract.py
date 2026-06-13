@@ -1,5 +1,7 @@
 import numpy as np
 
+from conftest import MODEL_PATH, REQUIRED_MODEL_FILES, missing_model_files
+
 
 EMBEDDING_DIMENSION = 384
 
@@ -103,6 +105,13 @@ def test_dataset_schema(dataset, dataset_grouped_by_type):
 
     for rows in dataset_grouped_by_type.values():
         assert len(rows) >= 2
+
+
+def test_local_model_files_are_complete():
+    assert not missing_model_files(), (
+        f"{MODEL_PATH} is incomplete. "
+        f"Required files: {list(REQUIRED_MODEL_FILES)}"
+    )
 
 
 def test_en_embedding(model, en_texts):
