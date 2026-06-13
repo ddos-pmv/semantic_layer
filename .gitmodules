@@ -1,6 +1,7 @@
 [submodule "models/all-MiniLM-L6-v2"]
 	path = models/all-MiniLM-L6-v2
 	url = https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
-[submodule "models/paraphrase-multilingual-MiniLM-L12-v2"]
-	path = models/paraphrase-multilingual-MiniLM-L12-v2
-	url = https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+	ignore = untracked
+[submodule "core/third_party/tokenizers-cpp"]
+	path = core/third_party/tokenizers-cpp
+	url = https://github.com/mlc-ai/tokenizers-cpp.git
