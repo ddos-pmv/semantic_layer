@@ -40,10 +40,11 @@ def model():
 
     model = SentenceTransformer(MODEL_PATH, local_files_only=True)
 
-    embedding = model.encode(["Test sentence."])
+    embedding = model.encode(["Some something someone somehow sometimes hate you"])
 
     print()
     print(f"Embedding shape: {embedding.shape}")
+    print(*embedding.tolist(), sep="\n")
 
     return model
 

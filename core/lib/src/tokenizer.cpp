@@ -43,10 +43,10 @@ public:
     const auto len = encoded.size();
 
     TokenizedText result;
-    result.input_ids = std::move(encoded);
+    result.input_ids.assign(encoded.begin(), encoded.end());
     result.attention_mask.assign(len, 1);
     result.token_type_ids.assign(len, 0);
-    result.seq_len = static_cast<int32_t>(len);
+    result.seq_len = static_cast<int64_t>(len);
 
     return result;
   }

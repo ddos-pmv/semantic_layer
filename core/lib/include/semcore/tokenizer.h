@@ -8,10 +8,10 @@
 namespace semcore {
 
 struct TokenizedText {
-  std::vector<int32_t> input_ids;
-  std::vector<int32_t> attention_mask;
-  std::vector<int32_t> token_type_ids;
-  int32_t seq_len = 0;
+  std::vector<int64_t> input_ids;
+  std::vector<int64_t> attention_mask;
+  std::vector<int64_t> token_type_ids;
+  int64_t seq_len = 0;
 
   friend std::ostream& operator<<(std::ostream& os, const TokenizedText& tokenized_text) {
     os << "input_ids[";
