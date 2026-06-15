@@ -1,0 +1,16 @@
+---
+BasedOnStyle: Google
+Language: Cpp
+Standard: Latest
+
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+ContinuationIndentWidth: 4
+
+ColumnLimit: 110
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+AllowShortFunctionsOnASingleLine: Empty
+SortIncludes: true

@@ -33,5 +33,5 @@ if(ONNXRUNTIME_ROOT)
             INTERFACE_INCLUDE_DIRECTORIES "${ONNXRUNTIME_ROOT}/include"
     )
 
-    target_link_libraries(SemCore PUBLIC ONNXRuntime::ONNXRuntime)
+    target_link_libraries(SemCore PRIVATE ONNXRuntime::ONNXRuntime)
 endif()
