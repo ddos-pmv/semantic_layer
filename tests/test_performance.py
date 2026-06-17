@@ -46,18 +46,21 @@ def test_single_embedding(model, en_texts, measured_iterations):
 @pytest.mark.parametrize("batch_size", [1, 2, 4, 8, 16, 32, 64, 128])
 @pytest.mark.parametrize("measured_iterations", [10])
 def test_batch_embedding(model, en_texts, batch_size, measured_iterations):
-    texts = [en_texts[0]] * batch_size
+    batch = []
+    for i in range(batch_size):
+        batch.append(en_texts[i%len(en_texts)])
+
     warmup_iterations = 10
 
     for _ in range(warmup_iterations):
-        model.encode(texts, batch_size=batch_size)
+        model.encode(batch, batch_size=batch_size)
 
     gc.disable()
     try:
         times_ns = []
         for _ in range(measured_iterations):
             start_ns = time.perf_counter_ns()
-            embedding = model.encode(texts, batch_size=batch_size)
+            embedding = model.encode(batch, batch_size=batch_size)
             end_ns = time.perf_counter_ns()
 
             assert embedding.shape[0] == batch_size
@@ -73,6 +76,7 @@ def test_batch_embedding(model, en_texts, batch_size, measured_iterations):
     print()
     print("batch embedding performance")
     print(f"batch_size: {batch_size}")
+    print(f"total time: {sum(times_ms):.3f} ms")
     print(f"iterations: {measured_iterations}")
     print(f"mean latency: {mean_ms:.3f} ms")
     print(f"latency per text: {mean_ms/batch_size :.3f} ms")

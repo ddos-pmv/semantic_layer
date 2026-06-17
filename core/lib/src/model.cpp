@@ -96,7 +96,7 @@ class EmbeddingModel::Impl {
 		}
 
 		std::array<const char*, 3> input_names{"input_ids", "attention_mask", "token_type_ids"};
-		std::array<const char*, 2> output_names{"token_embeddings", "sentence_embedding"};
+		std::array<const char*, 1> output_names{"sentence_embedding"};
 
 		std::array<int64_t, 2> input_shape{text.batch_size, text.seq_len};
 		std::array<Ort::Value, 3> input_tensors{
@@ -111,7 +111,7 @@ class EmbeddingModel::Impl {
 
 		auto outputs = session_.Run(run_options_, input_names.data(), input_tensors.data(),
 									input_tensors.size(), output_names.data(), output_names.size());
-		auto& sentence_embedding = outputs[1];
+		auto& sentence_embedding = outputs[0];
 		auto tensor_info = sentence_embedding.GetTensorTypeAndShapeInfo();
 		auto shape = tensor_info.GetShape();
 

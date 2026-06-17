@@ -11,8 +11,8 @@ namespace semcore {
 struct EmbeddingModelConfig {
 	std::string onnx_path;
 	std::string tokenizer_path;
-	int intra_op_threads = 1;
-	int inter_op_threads = 1;
+	int intra_op_threads = 0;
+	int inter_op_threads = 0;
 	bool enable_mem_pattern = true;
 	bool normalize_embeddings = false;
 };
