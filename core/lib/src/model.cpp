@@ -18,10 +18,27 @@ Ort::SessionOptions CreateSessionOptions(const EmbeddingModelConfig& config) {
 	options.SetIntraOpNumThreads(config.intra_op_threads);
 	options.SetInterOpNumThreads(config.inter_op_threads);
 	options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
-
+	// options.SetLogSeverityLevel(0);
 	if (!config.enable_mem_pattern) {
 		options.DisableMemPattern();
 	}
+	//
+	// // Настройка CoreML Execution Provider непосредственно при создании опций
+	// std::unordered_map<std::string, std::string> coreml_options;
+	// coreml_options["ModelFormat"] = "MLProgram";
+	// coreml_options["MLComputeUnits"] = "ALL";
+	// coreml_options["RequireStaticInputShapes"] = "0";
+	//
+	// try {
+	// 	options.AppendExecutionProvider("CoreML", coreml_options);
+	// 	std::cout << "[semcore] CoreML Execution Provider успешно добавлен.\n";
+	// } catch (const Ort::Exception& e) {
+	// 	std::cerr << "[semcore] Предупреждение: CoreML недоступен, откат на CPU. Ошибка: " << e.what() << "\n";
+	// }
+
+	// Добавляем CPU как гарантированный fallback
+	// options.AppendExecutionProvider_CPU( 0 );
+	// options.AppendExecutionProvider_CPU(0);
 
 	return options;
 }

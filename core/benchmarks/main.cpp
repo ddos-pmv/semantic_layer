@@ -21,7 +21,7 @@ semcore::EmbeddingModelConfig MakeConfig()
 	semcore::EmbeddingModelConfig config;
 	config.onnx_path = "../models/paraphrase-multilingual-MiniLM-L12-v2/model.onnx";
 	config.tokenizer_path = "../models/paraphrase-multilingual-MiniLM-L12-v2/tokenizer.json";
-	config.normalize_embeddings = true;
+	config.normalize_embeddings = false;
 	config.intra_op_threads = 0;
 	config.inter_op_threads = 0;
 	config.enable_mem_pattern = true;
