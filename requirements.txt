@@ -1,6 +1,7 @@
 numpy
 onnxruntime
 psutil
+python-dotenv
 sentence-transformers
 pytest
 pytest-benchmark

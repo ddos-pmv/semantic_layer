@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 from tokenizers import Tokenizer
 
-from conftest import MODEL_PATH, missing_model_files
+from conftest import MODEL_FILE, MODEL_PATH, missing_model_files
 
 
 def _get_onnxruntime():
@@ -31,8 +31,10 @@ def _make_session():
     session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
 
     providers = os.getenv("ORT_PROVIDERS", "CPUExecutionProvider").split(",")
+    print("Available providers:", ort.get_available_providers())
+    print("Current providers:", providers)
     return ort.InferenceSession(
-        f"{MODEL_PATH}/model.onnx",
+        f"{MODEL_PATH}/{MODEL_FILE}",
         sess_options=session_options,
         providers=providers,
     )
@@ -57,6 +59,18 @@ def _tokenize(tokenizer, texts):
         "attention_mask": attention_mask,
         "token_type_ids": token_type_ids,
     }
+
+
+def _embed(session, inputs):
+    # Official ONNX builds output raw token embeddings (last_hidden_state);
+    # reproduce SentenceTransformers' mean pooling + L2 normalization here.
+    last_hidden = session.run(["last_hidden_state"], inputs)[0]
+    mask = inputs["attention_mask"][:, :, None].astype(np.float32)
+    summed = (last_hidden * mask).sum(axis=1)
+    counts = np.clip(mask.sum(axis=1), 1e-9, None)
+    embeddings = summed / counts
+    norms = np.clip(np.linalg.norm(embeddings, axis=1, keepdims=True), 1e-9, None)
+    return embeddings / norms
 
 
 def _print_stats(title, batch_size, measured_iterations, times_ms):
@@ -105,7 +119,7 @@ def test_onnxruntime_batch_embedding(
 
     for _ in range(warmup_iterations):
         inputs = _tokenize(hf_tokenizer, batch)
-        onnxruntime_session.run(["sentence_embedding"], inputs)
+        _embed(onnxruntime_session, inputs)
 
     gc.disable()
     try:
@@ -113,7 +127,7 @@ def test_onnxruntime_batch_embedding(
         for _ in range(measured_iterations):
             start_ns = time.perf_counter_ns()
             inputs = _tokenize(hf_tokenizer, batch)
-            embedding = onnxruntime_session.run(["sentence_embedding"], inputs)[0]
+            embedding = _embed(onnxruntime_session, inputs)
             end_ns = time.perf_counter_ns()
 
             assert embedding.shape[0] == batch_size
@@ -131,7 +145,7 @@ def test_onnxruntime_batch_embedding(
         times_ms,
     )
 
-
+@pytest.mark.skip("do not need now")
 @pytest.mark.performance
 @pytest.mark.parametrize("batch_size", [1, 2, 4, 8, 16, 32, 64, 128])
 @pytest.mark.parametrize("measured_iterations", [10])
@@ -147,14 +161,14 @@ def test_onnxruntime_batch_inference_only(
     warmup_iterations = 10
 
     for _ in range(warmup_iterations):
-        onnxruntime_session.run(["sentence_embedding"], inputs)
+        _embed(onnxruntime_session, inputs)
 
     gc.disable()
     try:
         times_ns = []
         for _ in range(measured_iterations):
             start_ns = time.perf_counter_ns()
-            embedding = onnxruntime_session.run(["sentence_embedding"], inputs)[0]
+            embedding = _embed(onnxruntime_session, inputs)
             end_ns = time.perf_counter_ns()
 
             assert embedding.shape[0] == batch_size

@@ -1,18 +1,28 @@
 import json
+import os
 from pathlib import Path
 
 import pytest
+from dotenv import find_dotenv, load_dotenv
 from sentence_transformers import SentenceTransformer
 
 
-MODEL_PATH = "models/paraphrase-multilingual-MiniLM-L12-v2"
-DATA_PATH = "eval_data/spam_paraphrases.jsonl"
+# Load .env from the repository root (or any parent of the cwd) before reading
+# any configuration. Existing environment variables are not overridden, so an
+# inline `KEY=value pytest ...` still wins over the file.
+load_dotenv(find_dotenv(usecwd=True))
+
+MODEL_PATH = os.getenv("MODEL_DIR", "models/paraphrase-multilingual-MiniLM-L12-v2")
+# ONNX file to benchmark, relative to MODEL_PATH. Switch to an INT8 build
+# (e.g. model_qint8_arm64.onnx) via MODEL_FILE in .env.
+MODEL_FILE = os.getenv("MODEL_FILE", "model.onnx")
+DATA_PATH = os.getenv("DATASET_PATH", "eval_data/spam_paraphrases.jsonl")
 REQUIRED_MODEL_FILES = (
     "1_Pooling/config.json",
     "config.json",
     "config_sentence_transformers.json",
     "modules.json",
-    "model.onnx",
+    # "model.onnx",
     "pytorch_model.bin",
     "sentence_bert_config.json",
     "special_tokens_map.json",

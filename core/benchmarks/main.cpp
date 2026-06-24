@@ -12,25 +12,33 @@
 #include <string_view>
 #include <vector>
 
-namespace {
+#include "dotenv.hpp"
 
-constexpr std::string_view kDatasetPath = "../eval_data/spam_paraphrases.jsonl";
+namespace {
 
 semcore::EmbeddingModelConfig MakeConfig()
 {
+	const auto& env = dotenv::Environment();
+	const std::string model_dir =
+		env.Get("MODEL_DIR", "models/paraphrase-multilingual-MiniLM-L12-v2");
+	const std::string model_file = env.Get("MODEL_FILE", "model.onnx");
+
 	semcore::EmbeddingModelConfig config;
-	config.onnx_path = "../models/paraphrase-multilingual-MiniLM-L12-v2/model.onnx";
-	config.tokenizer_path = "../models/paraphrase-multilingual-MiniLM-L12-v2/tokenizer.json";
-	config.normalize_embeddings = false;
-	config.intra_op_threads = 0;
-	config.inter_op_threads = 0;
-	config.enable_mem_pattern = true;
+	config.onnx_path = (env.Resolve(model_dir) / model_file).string();
+	config.tokenizer_path = (env.Resolve(model_dir) / "tokenizer.json").string();
+	config.normalize_embeddings = env.GetBool("NORMALIZE_EMBEDDINGS", false);
+	config.intra_op_threads = env.GetInt("ORT_INTRA_OP_THREADS", 0);
+	config.inter_op_threads = env.GetInt("ORT_INTER_OP_THREADS", 0);
+	config.enable_mem_pattern = env.GetBool("ORT_ENABLE_MEM_PATTERN", true);
 	return config;
 }
 
 std::vector<std::string> LoadTexts(std::string_view key)
 {
-	std::ifstream file(std::string{kDatasetPath});
+	const auto& env = dotenv::Environment();
+	const std::string dataset_path = env.Get("DATASET_PATH", "eval_data/spam_paraphrases.jsonl");
+
+	std::ifstream file(env.Resolve(dataset_path));
 	if (!file.is_open()) {
 		throw std::runtime_error("Cannot open dataset");
 	}

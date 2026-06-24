@@ -2,6 +2,7 @@
 #include <semcore/model.h>
 #include <semcore/tokenizer.h>
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstddef>
@@ -113,7 +114,7 @@ class EmbeddingModel::Impl {
 		}
 
 		std::array<const char*, 3> input_names{"input_ids", "attention_mask", "token_type_ids"};
-		std::array<const char*, 1> output_names{"sentence_embedding"};
+		std::array<const char*, 1> output_names{"last_hidden_state"};
 
 		std::array<int64_t, 2> input_shape{text.batch_size, text.seq_len};
 		std::array<Ort::Value, 3> input_tensors{
@@ -128,20 +129,44 @@ class EmbeddingModel::Impl {
 
 		auto outputs = session_.Run(run_options_, input_names.data(), input_tensors.data(),
 									input_tensors.size(), output_names.data(), output_names.size());
-		auto& sentence_embedding = outputs[0];
-		auto tensor_info = sentence_embedding.GetTensorTypeAndShapeInfo();
+		auto& last_hidden_state = outputs[0];
+		auto tensor_info = last_hidden_state.GetTensorTypeAndShapeInfo();
 		auto shape = tensor_info.GetShape();
 
-		if (shape.size() != 2 || shape[0] != text.batch_size) {
-			throw std::runtime_error("Unexpected sentence_embedding shape");
+		// Official ONNX builds output raw token embeddings [batch, seq, dim];
+		// reduce them to sentence embeddings with the same masked mean pooling
+		// the Python side uses. L2 normalization stays optional (config flag).
+		if (shape.size() != 3 || shape[0] != text.batch_size || shape[1] != text.seq_len) {
+			throw std::runtime_error("Unexpected last_hidden_state shape");
 		}
 
-		const auto batch_size = shape[0];
-		const auto embedding_dim = static_cast<size_t>(shape[1]);
-		const auto total_size = batch_size * embedding_dim;
-		const float* data = sentence_embedding.GetTensorData<float>();
+		const auto batch_size = static_cast<size_t>(shape[0]);
+		const auto seq_len = static_cast<size_t>(shape[1]);
+		const auto embedding_dim = static_cast<size_t>(shape[2]);
+		const float* data = last_hidden_state.GetTensorData<float>();
 
-		return {std::vector<float>(data, data + total_size), embedding_dim};
+		std::vector<float> pooled(batch_size * embedding_dim, 0.0F);
+		for (size_t b = 0; b < batch_size; ++b) {
+			float* out = pooled.data() + b * embedding_dim;
+			float mask_sum = 0.0F;
+			for (size_t t = 0; t < seq_len; ++t) {
+				const auto mask = static_cast<float>(text.attention_mask[b * seq_len + t]);
+				if (mask == 0.0F) {
+					continue;
+				}
+				mask_sum += mask;
+				const float* token = data + (b * seq_len + t) * embedding_dim;
+				for (size_t d = 0; d < embedding_dim; ++d) {
+					out[d] += token[d] * mask;
+				}
+			}
+			const float inverse = 1.0F / std::max(mask_sum, 1e-9F);
+			for (size_t d = 0; d < embedding_dim; ++d) {
+				out[d] *= inverse;
+			}
+		}
+
+		return {std::move(pooled), embedding_dim};
 	}
 
 	EmbeddingModelConfig config_;
